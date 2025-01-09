@@ -1,0 +1,86 @@
+body {
+  margin: 0;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+}
+#gameBody {
+  position: relative;
+  height: 650px;
+  width: 360px;
+  background: #000;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+#leftTracks,
+#rightTracks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
+  height: 100%;
+}
+#car1,
+#car2 {
+  position: absolute;
+  height: 100px;
+  width: 50px;
+  bottom: 20px;
+  z-index: 1;
+  transform-origin: 50%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: top center;
+}
+
+#car1 {
+  background-image: url("./car1.png");
+}
+
+#car2 {
+  background-image: url("./car1.png");
+  filter: hue-rotate(180deg);
+}
+
+#llTrack,
+#lrTrack,
+#rlTrack,
+#rrTrack {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+#llTrack {
+  background: #bbe8ff;
+}
+
+#lrTrack {
+  background: #79acce;
+}
+
+#rlTrack {
+  background: #ffbbbb;
+}
+
+#rrTrack {
+  background: #ff7d7b;
+}
+
+#stone,
+#coin {
+  position: absolute;
+  height: 50px;
+  width: 50px;
+  left: 20px;
+  top: -50px;
+}
+
+#coin {
+  border-radius: 50%;
+  background: yellow;
+}
+
+#stone {
+  background: rgb(42, 50, 50);
+}
