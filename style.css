@@ -23,7 +23,7 @@ body {
 #car1,
 #car2 {
   position: absolute;
-  height: 100px;
+  height: 90px;
   width: 50px;
   bottom: 20px;
   z-index: 1;

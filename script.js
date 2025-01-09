@@ -157,13 +157,13 @@ class Stone extends Obj {
     }, 100);
 
     this.interval = setInterval(() => {
-      if (this.el.offsetTop > 470) this.checkCollide();
+      this.checkCollide();
     }, 10);
   }
 
   checkCollide() {
     if (
-      this.el.offsetTop > 470 &&
+      this.el.offsetTop > 480 &&
       this.el.offsetTop < 625 &&
       this.car.el.offsetLeft > this.left - 50 &&
       this.car.el.offsetLeft < this.left + 50
@@ -171,6 +171,11 @@ class Stone extends Obj {
       this.active = false;
       clearInterval(this.interval);
       globalStop();
+      this.el.animate([{ scale: 0.9 }], {
+        direction: "alternate",
+        duration: 1000,
+        iterations: Infinity,
+      });
       return true;
     }
   }
@@ -192,7 +197,7 @@ class Coin extends Obj {
       if (!this.active) {
         clearInterval(this.interval2);
       }
-      if (this.el.offsetTop > 470) this.checkCollide();
+      this.checkCollide();
     }, 10);
   }
 
@@ -210,6 +215,11 @@ class Coin extends Obj {
       return true;
     }
     if (this.el.offsetTop > 610) {
+      this.el.animate([{ scale: 1.1 }], {
+        direction: "alternate",
+        duration: 1000,
+        iterations: Infinity,
+      });
       globalStop();
     }
   }
@@ -243,7 +253,11 @@ function start() {
   rrTrack.innerHTML = "";
   scoreEl.innerText = 0;
   car1.addListener("a");
-  car2.addListener("s");
+  car1.addListener("A");
+  car1.addListener("ArrowLeft");
+  car2.addListener("d");
+  car2.addListener("D");
+  car2.addListener("ArrowRight");
 
   lTracks.start();
   rTracks.start();
@@ -254,7 +268,7 @@ function random() {
   return v[0] / 256;
 }
 window.onkeydown = (e) => {
-  if (e.key == "r") {
+  if (e.key == "r" || e.key == "R") {
     start();
   }
 };
