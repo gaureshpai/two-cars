@@ -7,9 +7,18 @@
     <title>Two-Cars</title>
   </head>
   <body>
-    <p id="score">0</p>
-    <button onclick="start()">Restart(press r)</button>
+    <div id="info">
+      Press <kbd>R</kbd> to restart.
+      <br />
+      Use <kbd>A</kbd> or <kbd>Left Arrow(←)</kbd> key to move the left car.
+      <br />
+      Use <kbd>D</kbd> or <kbd>Right Arrow(→)</kbd> key to move the right car.
+      <br />
+      Use <kbd>P</kbd> to pause.
+    </div>
+    <button onclick="start()">Restart(r)</button>
     <div id="gameBody">
+      <p id="score">0</p>
       <div id="leftTracks">
         <div id="car1"></div>
         <div id="llTrack"></div>
