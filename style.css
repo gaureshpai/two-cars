@@ -65,11 +65,11 @@ body {
 }
 
 #car1 {
-  background-image: url("./car1.png");
+  background-image: url("./asset/car.png");
 }
 
 #car2 {
-  background-image: url("./car1.png");
+  background-image: url("./asset/car.png");
   filter: hue-rotate(180deg);
 }
 
@@ -105,13 +105,18 @@ body {
   width: 50px;
   left: 20px;
   top: -50px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: top center;
 }
 
 #coin {
   border-radius: 50%;
   background: yellow;
+  background-image: url("./asset/coin.png");
 }
 
 #stone {
   background: rgb(81, 58, 0);
+  background-image: url("./asset/stone.jpg");
 }
