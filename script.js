@@ -4,7 +4,7 @@ let score = 0;
 let active = false;
 let paused = false;
 let speedFactor = 1;
-let height = 650;
+let height = document.getElementById("gameBody").clientHeight;
 let infoEl = document.getElementById("info");
 
 //classes
@@ -162,13 +162,13 @@ class Tracks {
 
   removePassedObjs() {
     this.t1Objects.forEach((obj) => {
-      if (obj.el.offsetTop > 650) {
+      if (obj.el.offsetTop > height) {
         this.t1Objects.delete(obj);
         obj.el.remove();
       }
     });
     this.t2Objects.forEach((obj) => {
-      if (obj.el.offsetTop > 650) {
+      if (obj.el.offsetTop > height) {
         this.t2Objects.delete(obj);
         obj.el.remove();
       }
@@ -190,6 +190,7 @@ class Obj {
     this.width = 50;
     this.left = left;
     this.baseDuration = 10000;
+    this.carHeight = car.el.offsetHeight;
   }
 
   mov() {
@@ -214,6 +215,20 @@ class Obj {
     }, 10);
     this.animation?.play();
   }
+
+  isColliding() {
+    const carBottom = height - 20;
+    const objHeight = this.el.offsetHeight;
+    const carCollisionZoneStart = carBottom - this.carHeight - objHeight;
+    const carCollisionZoneEnd = carBottom;
+
+    return (
+      this.el.offsetTop > carCollisionZoneStart &&
+      this.el.offsetTop < carCollisionZoneEnd &&
+      this.car.el.offsetLeft > this.left - 50 &&
+      this.car.el.offsetLeft < this.left + 50
+    );
+  }
 }
 
 class Stone extends Obj {
@@ -229,12 +244,7 @@ class Stone extends Obj {
   }
 
   checkCollide() {
-    if (
-      this.el.offsetTop > 490 &&
-      this.el.offsetTop < 630 &&
-      this.car.el.offsetLeft > this.left - 50 &&
-      this.car.el.offsetLeft < this.left + 50
-    ) {
+    if (this.isColliding()) {
       active = false;
       globalStop();
       this.el.animate([{ scale: 0.9 }], {
@@ -262,13 +272,8 @@ class Coin extends Obj {
   }
 
   checkCollide() {
-    //collect coin
-    if (
-      this.el.offsetTop > 475 &&
-      this.el.offsetTop < 620 &&
-      this.car.el.offsetLeft > this.left - 50 &&
-      this.car.el.offsetLeft < this.left + 50
-    ) {
+    // collect coin
+    if (this.isColliding()) {
       this.el.remove();
       scoreEl.innerText = ++score;
       clearInterval(this.interval);
@@ -276,7 +281,7 @@ class Coin extends Obj {
     }
 
     // if coin passes, game end
-    if (this.el.offsetTop > 632) {
+    if (this.el.offsetTop > height - 18) {
       this.el.animate(
         [{ scale: 1.1, border: "5px solid red", boxSizing: "border-box" }],
         {
@@ -338,6 +343,7 @@ function random() {
   let v = crypto.getRandomValues(new Uint8Array(1));
   return v[0] / 256;
 }
+
 window.onkeydown = (e) => {
   if (e.key == "r" || e.key == "R") {
     start();
@@ -351,3 +357,7 @@ window.onkeydown = (e) => {
     }
   }
 };
+
+window.addEventListener("resize", () => {
+  height = document.getElementById("gameBody").clientHeight;
+});

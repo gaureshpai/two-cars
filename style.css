@@ -36,7 +36,8 @@ body {
 
 #gameBody {
   position: relative;
-  height: 650px;
+  height: 100vh;
+  max-height: 650px;
   width: 360px;
   background: #000;
   display: grid;
