@@ -70,7 +70,7 @@ class Tracks {
     this.car = car;
     this.t1Objects = new Set();
     this.t2Objects = new Set();
-    this.baseTimeout = 3000;
+    this.baseTimeout = 2000;
     this.lastAddObjectTime = Date.now();
     this.remainingTimeout = null;
     this.lastPauseTime = null;
@@ -207,7 +207,7 @@ class Obj {
     this.el.top = this.top + "px";
     this.width = 50;
     this.left = left;
-    this.baseDuration = 10000;
+    this.baseDuration = 7500;
     this.carHeight = car.el.offsetHeight;
   }
 
