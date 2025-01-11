@@ -1,10 +1,11 @@
 // global variables
 let scoreEl = document.getElementById("score");
 let score = 0;
-let active = true;
+let active = false;
 let paused = false;
 let speedFactor = 1;
 let height = 650;
+let infoEl = document.getElementById("info");
 
 //classes
 class Car {
@@ -310,12 +311,14 @@ function globalStop() {
   rTracks?.stop();
   car1.animate?.pause();
   car2.animate?.pause();
+  infoEl.style.display = "block";
 }
 
 function start() {
   score = 0;
   speedFactor = 1;
   globalStop();
+  infoEl.style.display = "none";
   active = true;
   car1.reset();
   car2.reset();
@@ -348,7 +351,3 @@ window.onkeydown = (e) => {
     }
   }
 };
-
-window.requestAnimationFrame(() => {
-  start();
-});

@@ -7,8 +7,20 @@ body {
 
 #info {
   position: absolute;
-  top: 0;
-  left: 0;
+  background-color: #ffffff;
+  z-index: 1;
+  text-align: center;
+  padding: 10px 15px;
+}
+
+#info button {
+  margin-top: 10px;
+  padding: 10px 15px;
+  border: 0;
+  border-radius: 5px;
+  background-color: #008b1e74;
+  color: rgb(0, 0, 0);
+  cursor: pointer;
 }
 
 #score {
