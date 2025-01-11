@@ -396,14 +396,15 @@ gameContainer.addEventListener(
   "touchstart",
   (event) => {
     event.preventDefault();
-    const touch = event.touches[0];
-    const containerCenter = gameContainer.offsetWidth / 2;
-    const touchX = touch.clientX - gameContainer.getBoundingClientRect().left;
-    if (touchX < containerCenter) {
-      car1.mov();
-    } else {
-      car2.mov();
-    }
+    Array.from(event.touches).forEach(touch => {
+      const containerCenter = gameContainer.offsetWidth / 2;
+      const touchX = touch.clientX - gameContainer.getBoundingClientRect().left;
+      if (touchX < containerCenter) {
+        car1.mov();
+      } else {
+        car2.mov();
+      }
+    });
   },
   { passive: false }
 );
