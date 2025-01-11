@@ -40,15 +40,6 @@ class Car {
       duration: 200,
       fill: "forwards",
     });
-    // this.el.animate(
-    //   [
-    //     { rotate: `${this.cur ? "-" : "+"}2deg` },
-    //     { rotate: `${this.cur ? "-" : "+"}30deg` },
-    //     { rotate: `${this.cur ? "-" : "+"}15deg` },
-    //     { rotate: `${this.cur ? "-" : "+"}0deg` },
-    //   ],
-    //   { duration: 200 }
-    // );
   }
 
   addListener(key1) {
@@ -80,6 +71,9 @@ class Tracks {
     this.t1Objects = new Set();
     this.t2Objects = new Set();
     this.baseTimeout = 3000;
+    this.lastAddObjectTime = Date.now();
+    this.remainingTimeout = null;
+    this.lastPauseTime = null;
   }
 
   updateSpeedFactor() {
@@ -94,6 +88,7 @@ class Tracks {
   }
 
   start() {
+    this.lastAddObjectTime = Date.now();
     this.addObject();
   }
 
@@ -112,7 +107,15 @@ class Tracks {
   pause() {
     if (!active) return;
     paused = true;
-    clearTimeout(this.timeout);
+    this.lastPauseTime = Date.now();
+
+    // Calculate remaining timeout when pausing
+    if (this.timeout) {
+      this.remainingTimeout =
+        this.getCurrentTimeout() - (Date.now() - this.lastAddObjectTime);
+      clearTimeout(this.timeout);
+    }
+
     this.t1Objects.forEach((obj) => {
       obj.pause();
     });
@@ -132,33 +135,47 @@ class Tracks {
       obj.resume();
     });
 
-    this.addObject();
+    // If we've been paused longer than the remaining timeout, add object immediately
+    const pauseDuration = Date.now() - this.lastPauseTime;
+    if (
+      this.remainingTimeout === null ||
+      pauseDuration > this.remainingTimeout
+    ) {
+      this.addObject();
+    } else {
+      // Otherwise, wait for the remaining time
+      this.timeout = setTimeout(() => this.addObject(), this.remainingTimeout);
+    }
   }
 
   addObject() {
+    this.lastAddObjectTime = Date.now();
+    this.remainingTimeout = null;
+
     this.updateSpeedFactor();
-    this.timeout = setTimeout(() => {
-      if (!active || paused) return;
-      let whichTrack = random() > 0.5 ? true : false;
-      if (whichTrack) {
-        let whichObj = random() > 0.5 ? true : false;
-        let objel = document.createElement("div");
-        let obj = whichObj
-          ? new Stone(objel, this.car, 20)
-          : new Coin(objel, this.car, 20);
-        this.t1Objects.add(obj);
-        this.track1.appendChild(objel);
-      } else {
-        let whichObj = random() > 0.5 ? true : false;
-        let objel = document.createElement("div");
-        let obj = whichObj
-          ? new Stone(objel, this.car, 110)
-          : new Coin(objel, this.car, 110);
-        this.t2Objects.add(obj);
-        this.track2.appendChild(objel);
-      }
-      this.addObject();
-    }, this.getCurrentTimeout());
+    if (!active || paused) return;
+
+    let whichTrack = random() > 0.5 ? true : false;
+    if (whichTrack) {
+      let whichObj = random() > 0.5 ? true : false;
+      let objel = document.createElement("div");
+      let obj = whichObj
+        ? new Stone(objel, this.car, 20)
+        : new Coin(objel, this.car, 20);
+      this.t1Objects.add(obj);
+      this.track1.appendChild(objel);
+    } else {
+      let whichObj = random() > 0.5 ? true : false;
+      let objel = document.createElement("div");
+      let obj = whichObj
+        ? new Stone(objel, this.car, 110)
+        : new Coin(objel, this.car, 110);
+      this.t2Objects.add(obj);
+      this.track2.appendChild(objel);
+    }
+
+    const nextTimeout = this.getCurrentTimeout();
+    this.timeout = setTimeout(() => this.addObject(), nextTimeout);
   }
 
   removePassedObjs() {
