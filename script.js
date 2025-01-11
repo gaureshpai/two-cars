@@ -71,20 +71,24 @@ class Tracks {
     this.t1Objects = new Set();
     this.t2Objects = new Set();
     this.baseTimeout = 2000;
+    this.baseObjectSpeed = 7500; // Base duration for object animation
     this.lastAddObjectTime = Date.now();
     this.remainingTimeout = null;
     this.lastPauseTime = null;
   }
 
   updateSpeedFactor() {
-    const speedIncrease = Math.floor(score / 10) * 0.02;
-    speedFactor = Math.max(0.1, 1 / (1 + speedIncrease));
+    speedFactor = 1 + Math.floor(score / 2) * 0.05;
   }
 
   getCurrentTimeout() {
-    const currentTimeout = this.baseTimeout * speedFactor;
-    const randomVariation = random() * 800 * speedFactor;
+    const currentTimeout = this.baseTimeout / speedFactor;
+    const randomVariation = (random() * 800) / speedFactor;
     return currentTimeout + randomVariation;
+  }
+
+  getCurrentObjectSpeed() {
+    return this.baseObjectSpeed / speedFactor;
   }
 
   start() {
@@ -135,17 +139,7 @@ class Tracks {
       obj.resume();
     });
 
-    // If we've been paused longer than the remaining timeout, add object immediately
-    const pauseDuration = Date.now() - this.lastPauseTime;
-    if (
-      this.remainingTimeout === null ||
-      pauseDuration > this.remainingTimeout
-    ) {
-      this.addObject();
-    } else {
-      // Otherwise, wait for the remaining time
-      this.timeout = setTimeout(() => this.addObject(), this.remainingTimeout);
-    }
+    this.timeout = setTimeout(() => this.addObject(), this.remainingTimeout);
   }
 
   addObject() {
@@ -160,16 +154,16 @@ class Tracks {
       let whichObj = random() > 0.5 ? true : false;
       let objel = document.createElement("div");
       let obj = whichObj
-        ? new Stone(objel, this.car, 20)
-        : new Coin(objel, this.car, 20);
+        ? new Stone(objel, this.car, 20, this.getCurrentObjectSpeed())
+        : new Coin(objel, this.car, 20, this.getCurrentObjectSpeed());
       this.t1Objects.add(obj);
       this.track1.appendChild(objel);
     } else {
       let whichObj = random() > 0.5 ? true : false;
       let objel = document.createElement("div");
       let obj = whichObj
-        ? new Stone(objel, this.car, 110)
-        : new Coin(objel, this.car, 110);
+        ? new Stone(objel, this.car, 110, this.getCurrentObjectSpeed())
+        : new Coin(objel, this.car, 110, this.getCurrentObjectSpeed());
       this.t2Objects.add(obj);
       this.track2.appendChild(objel);
     }
@@ -200,24 +194,24 @@ class Obj {
    * @param {HTMLElement} el
    * @param {Car} car
    * @param {number} left
+   * @param {number} duration
    */
-  constructor(el, car, left) {
+  constructor(el, car, left, duration) {
     this.el = el;
     this.car = car;
     this.el.top = this.top + "px";
     this.width = 50;
     this.left = left;
-    this.baseDuration = 7500;
+    this.duration = duration;
     this.carHeight = car.el.offsetHeight;
   }
 
   mov() {
     if (!active || paused) return;
-    const currentDuration = this.baseDuration * speedFactor;
 
     this.animation = this.el.animate([{ top: height + "px" }], {
       easing: "linear",
-      duration: currentDuration,
+      duration: this.duration,
       fill: "forwards",
     });
   }
@@ -250,8 +244,8 @@ class Obj {
 }
 
 class Stone extends Obj {
-  constructor(el, car, left) {
-    super(el, car, left);
+  constructor(el, car, left, duration) {
+    super(el, car, left, duration);
     this.el.id = "stone";
     this.mov();
 
@@ -276,8 +270,8 @@ class Stone extends Obj {
 }
 
 class Coin extends Obj {
-  constructor(el, car, left) {
-    super(el, car, left);
+  constructor(el, car, left, duration) {
+    super(el, car, left, duration);
     this.el.id = "coin";
     this.mov();
 
@@ -396,7 +390,7 @@ gameContainer.addEventListener(
   "touchstart",
   (event) => {
     event.preventDefault();
-    Array.from(event.touches).forEach(touch => {
+    Array.from(event.touches).forEach((touch) => {
       const containerCenter = gameContainer.offsetWidth / 2;
       const touchX = touch.clientX - gameContainer.getBoundingClientRect().left;
       if (touchX < containerCenter) {
