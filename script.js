@@ -4,7 +4,8 @@ let score = 0;
 let active = false;
 let paused = false;
 let speedFactor = 1;
-let height = document.getElementById("gameBody").clientHeight;
+const gameContainer = document.getElementById("gameBody");
+let height = gameContainer.clientHeight;
 let infoEl = document.getElementById("info");
 
 //classes
@@ -359,5 +360,33 @@ window.onkeydown = (e) => {
 };
 
 window.addEventListener("resize", () => {
-  height = document.getElementById("gameBody").clientHeight;
+  height = gameContainer.clientHeight;
 });
+
+// Eventlisteners for mobile support
+gameContainer.addEventListener("click", (event) => {
+  const containerCenter = gameContainer.offsetWidth / 2;
+  const clickX = event.clientX - gameContainer.getBoundingClientRect().left;
+  if (clickX < containerCenter) {
+    car1.mov();
+  } else {
+    car2.mov();
+  }
+  event.preventDefault();
+});
+
+gameContainer.addEventListener(
+  "touchstart",
+  (event) => {
+    event.preventDefault();
+    const touch = event.touches[0];
+    const containerCenter = gameContainer.offsetWidth / 2;
+    const touchX = touch.clientX - gameContainer.getBoundingClientRect().left;
+    if (touchX < containerCenter) {
+      car1.mov();
+    } else {
+      car2.mov();
+    }
+  },
+  { passive: false }
+);
