@@ -2,6 +2,7 @@
 let scoreEl = document.getElementById("score");
 let score = 0;
 let active = true;
+let paused = false;
 let speedFactor = 1;
 let height = 650;
 
@@ -24,7 +25,7 @@ class Car {
   }
 
   mov() {
-    if (!active) return;
+    if (!active || paused) return;
     if (
       this.animate &&
       this.animate.currentTime < this.animate.effect.getTiming().duration - 80
@@ -70,13 +71,24 @@ class Tracks {
    * @param {HTMLElement} track2
    * @param {Car} car
    */
-
   constructor(track1, track2, car) {
     this.track1 = track1;
     this.track2 = track2;
     this.car = car;
     this.t1Objects = new Set();
     this.t2Objects = new Set();
+    this.baseTimeout = 3000;
+  }
+
+  updateSpeedFactor() {
+    const speedIncrease = Math.floor(score / 10) * 0.02;
+    speedFactor = Math.max(0.1, 1 / (1 + speedIncrease));
+  }
+
+  getCurrentTimeout() {
+    const currentTimeout = this.baseTimeout * speedFactor;
+    const randomVariation = random() * 800 * speedFactor;
+    return currentTimeout + randomVariation;
   }
 
   start() {
@@ -96,7 +108,8 @@ class Tracks {
   }
 
   pause() {
-    active = false;
+    if (!active) return;
+    paused = true;
     clearTimeout(this.timeout);
     this.t1Objects.forEach((obj) => {
       obj.pause();
@@ -107,7 +120,8 @@ class Tracks {
   }
 
   resume() {
-    active = true;
+    if (!active) return;
+    paused = false;
 
     this.t1Objects.forEach((obj) => {
       obj.resume();
@@ -120,8 +134,9 @@ class Tracks {
   }
 
   addObject() {
+    this.updateSpeedFactor();
     this.timeout = setTimeout(() => {
-      if (!active) return;
+      if (!active || paused) return;
       let whichTrack = random() > 0.5 ? true : false;
       if (whichTrack) {
         let whichObj = random() > 0.5 ? true : false;
@@ -141,7 +156,7 @@ class Tracks {
         this.track2.appendChild(objel);
       }
       this.addObject();
-    }, 2000);
+    }, this.getCurrentTimeout());
   }
 
   removePassedObjs() {
@@ -173,13 +188,16 @@ class Obj {
     this.el.top = this.top + "px";
     this.width = 50;
     this.left = left;
+    this.baseDuration = 10000;
   }
 
   mov() {
-    if (!active) return;
+    if (!active || paused) return;
+    const currentDuration = this.baseDuration * speedFactor;
+
     this.animation = this.el.animate([{ top: height + "px" }], {
       easing: "linear",
-      duration: 10000,
+      duration: currentDuration,
       fill: "forwards",
     });
   }
@@ -190,7 +208,7 @@ class Obj {
 
   resume() {
     this.checkInterval = setInterval(() => {
-      if (!active) return clearInterval(this.checkInterval);
+      if (!active || paused) return clearInterval(this.checkInterval);
       this.checkCollide();
     }, 10);
     this.animation?.play();
@@ -204,7 +222,7 @@ class Stone extends Obj {
     this.mov();
 
     this.checkInterval = setInterval(() => {
-      if (!active) return clearInterval(this.checkInterval);
+      if (!active || paused) return clearInterval(this.checkInterval);
       this.checkCollide();
     }, 10);
   }
@@ -235,7 +253,7 @@ class Coin extends Obj {
     this.mov();
 
     this.interval = setInterval(() => {
-      if (!active) {
+      if (!active || paused) {
         clearInterval(this.interval);
       }
       this.checkCollide();
@@ -258,11 +276,14 @@ class Coin extends Obj {
 
     // if coin passes, game end
     if (this.el.offsetTop > 632) {
-      this.el.animate([{ scale: 1.1 }], {
-        direction: "alternate",
-        duration: 500,
-        iterations: Infinity,
-      });
+      this.el.animate(
+        [{ scale: 1.1, border: "5px solid red", boxSizing: "border-box" }],
+        {
+          direction: "alternate",
+          duration: 500,
+          iterations: Infinity,
+        }
+      );
       globalStop();
     }
   }
@@ -318,10 +339,10 @@ window.onkeydown = (e) => {
   if (e.key == "r" || e.key == "R") {
     start();
   } else if (e.key == "p" || e.key == "P") {
-    if (active) {
+    if (!paused && active) {
       lTracks?.pause();
       rTracks?.pause();
-    } else {
+    } else if (paused && active) {
       lTracks?.resume();
       rTracks?.resume();
     }
