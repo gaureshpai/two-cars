@@ -53,6 +53,7 @@ two-cars/
 ├── index.html      # Main HTML file
 ├── style.css       # Game styling
 ├── script.js       # Game logic
+├── asset           # Game assets folder
 ```
 
 ---
