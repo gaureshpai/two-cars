@@ -3,9 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Two-Cars game: Control two cars simultaneously to avoid obstacles and score points!" />
+    <meta name="keywords" content="Two-Cars, game, cars, control, score, fun" />
+    <meta name="author" content="Your Name" />
+    <meta name="theme-color" content="#000000" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="icon" type="image/png" href="asset/logo.png" />
+
     <link rel="stylesheet" href="style.css" />
-    <title>Two-Cars</title>
+
+    <title>Two-Cars Game</title>
   </head>
+
   <body>
     <div id="info">
       Press <kbd>R</kbd> to <strong>start or restart</strong>.
@@ -19,6 +28,18 @@
       Use <kbd>P</kbd> to <strong>pause or resume</strong>.
       <br />
       <button onclick="start()">Start(R)</button>
+    </div>
+    <div id="pause-message">
+      <strong class="paused">Game Paused</strong>
+      <br/>
+      <br />
+      Use <kbd>A</kbd> or <kbd>Left Arrow(←)</kbd> key to
+      <strong>move the left car</strong>.
+      <br />
+      Use <kbd>D</kbd> or <kbd>Right Arrow(→)</kbd> key to
+      <strong>move the right car</strong>.
+      <br />
+      Click <kbd>P</kbd> to <strong>resume</strong>.
     </div>
     <div id="gameBody">
       <p id="score">0</p>
