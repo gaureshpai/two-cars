@@ -255,5 +255,4 @@ body {
 #stone {
   background: rgb(81, 58, 0);
   background-image: url("./asset/stone.jpg");
-  box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.8);
 }
