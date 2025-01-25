@@ -264,6 +264,13 @@ class Stone extends Obj {
         duration: 500,
         iterations: Infinity,
       });
+      scoreEl.animate([
+        { backgroundColor: 'green', transform: 'scale(1.2)' },
+        { backgroundColor: 'transparent', transform: 'scale(1)' }
+      ], {
+        duration: 1000,
+        easing: 'ease-in-out'
+      });
       return true;
     }
   }
@@ -363,9 +370,11 @@ window.onkeydown = (e) => {
     if (!paused && active) {
       lTracks?.pause();
       rTracks?.pause();
+      document.getElementById("pause-message").style.display = "block";
     } else if (paused && active) {
       lTracks?.resume();
       rTracks?.resume();
+      document.getElementById("pause-message").style.display = "none";
     }
   }
 };
@@ -386,19 +395,17 @@ gameContainer.addEventListener("click", (event) => {
   event.preventDefault();
 });
 
-gameContainer.addEventListener(
-  "touchstart",
-  (event) => {
-    event.preventDefault();
-    Array.from(event.touches).forEach((touch) => {
-      const containerCenter = gameContainer.offsetWidth / 2;
-      const touchX = touch.clientX - gameContainer.getBoundingClientRect().left;
-      if (touchX < containerCenter) {
-        car1.mov();
-      } else {
-        car2.mov();
-      }
-    });
-  },
-  { passive: false }
+gameContainer.addEventListener("touchstart", (event) => {
+  event.preventDefault();
+  Array.from(event.touches).forEach((touch) => {
+    const containerCenter = gameContainer.offsetWidth / 2;
+    const touchX = touch.clientX - gameContainer.getBoundingClientRect().left;
+    if (touchX < containerCenter) {
+      car1.mov();
+    } else {
+      car2.mov();
+    }
+  });
+},
+{ passive: false }
 );
